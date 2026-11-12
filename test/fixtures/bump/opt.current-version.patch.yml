@@ -1,0 +1,16 @@
+args:
+  - '--current-version'
+  - '1.1.1'
+  - '--patch'
+
+/input/package.json: |
+  {
+    "name": "test",
+    "version": "0.1.0"
+  }
+
+/output/package.json: |
+  {
+    "name": "test",
+    "version": "1.1.2"
+  }

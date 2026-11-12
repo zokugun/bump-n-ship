@@ -1,0 +1,10 @@
+args:
+  - '--pre'
+
+/input/package.json: |
+  {
+    "name": "test",
+    "version": "0.1.0"
+  }
+
+output: '? Select increment (next version):'

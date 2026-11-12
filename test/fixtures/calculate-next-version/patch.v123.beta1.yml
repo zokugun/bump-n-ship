@@ -1,0 +1,5 @@
+input:
+  version: 1.2.3
+  mode: patch
+
+output: 1.2.4

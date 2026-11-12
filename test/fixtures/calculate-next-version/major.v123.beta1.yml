@@ -1,0 +1,5 @@
+input:
+  version: 1.2.3
+  mode: major
+
+output: 2.0.0

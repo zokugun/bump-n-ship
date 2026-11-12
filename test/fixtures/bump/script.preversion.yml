@@ -1,0 +1,24 @@
+args:
+  - '--set-version'
+  - '1.1.1'
+
+/input/package.json: |
+  {
+    "name": "test",
+    "version": "0.1.0",
+    "scripts": {
+      "preversion": "node preversion.mjs"
+    }
+  }
+/input/preversion.mjs: |
+  import pkg from './package.json' with { type: 'json' };
+
+  console.log('preversion:', pkg.version);
+
+/output/package.json: |
+  {
+    "name": "test",
+    "version": "1.1.1"
+  }
+
+output: 'preversion: 0.1.0'

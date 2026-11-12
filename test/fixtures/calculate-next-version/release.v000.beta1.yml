@@ -1,0 +1,5 @@
+input:
+  version: 0.0.0
+  mode: release
+
+error: version 0.0.0 is not a prerelease

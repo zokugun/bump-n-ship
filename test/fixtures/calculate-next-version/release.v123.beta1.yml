@@ -1,0 +1,5 @@
+input:
+  version: 1.2.3
+  mode: release
+
+error: version 1.2.3 is not a prerelease

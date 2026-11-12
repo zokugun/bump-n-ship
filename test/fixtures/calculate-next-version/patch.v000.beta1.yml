@@ -1,0 +1,5 @@
+input:
+  version: 0.0.0
+  mode: patch
+
+output: 0.0.1

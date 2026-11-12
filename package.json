@@ -1,0 +1,119 @@
+{
+	"name": "@zokugun/bump-n-ship",
+	"description": "Bump your project version, update files, and publish tags or PRs with ease.",
+	"version": "0.0.0",
+	"author": {
+		"name": "Baptiste Augrain",
+		"email": "daiyam@zokugun.org"
+	},
+	"license": "MIT",
+	"homepage": "https://github.com/zokugun/bump-n-ship",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/zokugun/bump-n-ship.git"
+	},
+	"bugs": {
+		"url": "https://github.com/zokugun/bump-n-ship/discussions/categories/issue-triage"
+	},
+	"engines": {
+		"node": ">=18.20"
+	},
+	"type": "module",
+	"bin": {
+		"bump-n-ship": "bin/bump-n-ship",
+		"bumpnship": "bin/bump-n-ship"
+	},
+	"main": "index.js",
+	"scripts": {
+		"audit:fix": "npm audit fix --min-release-age=0",
+		"build": "npm run clean && npm run build:out",
+		"build:out": "tsc-leda generate",
+		"ci:lint": "zizmor .",
+		"ci:lint:fix": "zizmor . --fix=all",
+		"clean": "rimraf .test .src dist",
+		"compile:src": "tsc -p src",
+		"compile:test": "tsc -p test",
+		"lint": "eslint",
+		"lint:all": "npm run lint:package && npm run ci:lint",
+		"lint:fix": "eslint --fix",
+		"lint:package": "fixpack || true",
+		"prepack": "npm run build",
+		"prepare": "husky; npm run lint:package",
+		"test": "vitest run --reporter tree",
+		"test:coverage": "vitest run --reporter tree --coverage --coverage.reporter text",
+		"test:ui": "vitest --ui --coverage",
+		"test:watch": "vitest",
+		"update:artifacts": "artifact update",
+		"update:ci": "pinact run -min-age 7 -update",
+		"update:deps": "taze --all",
+		"watch:build": "tsc-watch -p src --onSuccess 'npm run build'",
+		"watch:src": "tsc-watch -p src",
+		"watch:test": "tsc-watch -p test"
+	},
+	"dependencies": {
+		"@zokugun/cli-utils": "0.4.0",
+		"@zokugun/fs-extra-plus": "0.6.2",
+		"@zokugun/git-toolkit": "0.1.0",
+		"@zokugun/is-it-type": "0.8.1",
+		"@zokugun/text-line-utils": "0.1.0",
+		"@zokugun/xtry": "0.12.1",
+		"dayjs": "1.11.23",
+		"verkit": "0.5.0",
+		"yaml": "2.9.1"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "20.5.3",
+		"@commitlint/config-conventional": "20.5.3",
+		"@types/node": "20.19.43",
+		"@vitest/coverage-v8": "4.1.12",
+		"@vitest/ui": "4.1.12",
+		"@zokugun/eslint-config": "0.2.1",
+		"@zokugun/eslint-config-data": "0.2.1",
+		"@zokugun/eslint-config-glossary": "0.2.0",
+		"@zokugun/eslint-config-js": "0.2.1",
+		"@zokugun/eslint-config-md": "0.4.1",
+		"@zokugun/eslint-config-nodejs": "0.2.0",
+		"@zokugun/eslint-config-style": "0.3.1",
+		"@zokugun/eslint-config-test": "0.2.0",
+		"@zokugun/eslint-config-ts": "0.3.2",
+		"@zokugun/tsc-leda": "0.9.5",
+		"eslint": "10.13.0",
+		"fixpack": "4.0.0",
+		"husky": "9.1.7",
+		"lint-staged": "16.4.0",
+		"rimraf": "6.1.4",
+		"taze": "19.17.2",
+		"tsc-watch": "7.2.1",
+		"typescript": "5.9.3",
+		"vitest": "4.1.12",
+		"vitest-command-line": "0.9.1"
+	},
+	"overrides": {
+		"@eslint/config-array": {
+			"minimatch": "11.0.1"
+		},
+		"@typescript-eslint/typescript-estree": {
+			"minimatch": "11.0.1"
+		},
+		"eslint": {
+			"minimatch": "11.0.1"
+		},
+		"eslint-plugin-import-x": {
+			"minimatch": "11.0.1"
+		},
+		"micromark-extension-math": {
+			"katex": "0.18.4"
+		}
+	},
+	"allowScripts": {
+		"fsevents": true
+	},
+	"keywords": [
+		"bump",
+		"git",
+		"publish",
+		"release",
+		"semver",
+		"versioning"
+	]
+}

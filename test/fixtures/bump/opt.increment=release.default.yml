@@ -1,0 +1,11 @@
+args:
+  - '--increment'
+  - 'release'
+
+/input/package.json: |
+  {
+    "name": "test",
+    "version": "0.1.0"
+  }
+
+error: version 0.1.0 is not a prerelease
