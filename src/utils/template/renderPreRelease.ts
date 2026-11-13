@@ -2,12 +2,12 @@ import type { AsyncDResult } from '@zokugun/xtry';
 import type { PrereleaseIdentifier } from 'verkit';
 import type { Tokens } from './types.js';
 
+import { loadGitTokens } from '@zokugun/git-toolkit';
 import { isNumber } from '@zokugun/is-it-type';
 import { err, ok } from '@zokugun/xtry';
 import dayjs from 'dayjs';
 
 import { extended } from '../extended-dayjs.js';
-import { loadGitTokens } from './loadGitTokens.js';
 
 const CAPTURE_REGEX = /\{(date|git|index)(?::([0-9A-Za-z]+))?\}/g;
 const DETECT_REGEX = /\{(?:date|git|index)(?::[0-9A-Za-z]+)?\}/;
@@ -38,11 +38,13 @@ export async function renderPreRelease(template: string, current: PrereleaseIden
 			}
 			else if(name === 'git') {
 				if(!tokens.git) {
-					const result = await loadGitTokens(tokens, cwd);
+					const result = await loadGitTokens(cwd);
 
 					if(result.fails) {
 						return result;
 					}
+
+					tokens.git = result.value;
 				}
 
 				if(!GIT_PROPERTIES.includes(property)) {

@@ -1,11 +1,11 @@
 import type { AsyncDResult } from '@zokugun/xtry';
 import type { Tokens } from './types.js';
 
+import { loadGitTokens } from '@zokugun/git-toolkit';
 import { err, ok } from '@zokugun/xtry';
 import dayjs from 'dayjs';
 
 import { extended } from '../extended-dayjs.js';
-import { loadGitTokens } from './loadGitTokens.js';
 
 const CAPTURE_REGEX = /\{(date|git|major|minor|oldVersion|patch|releaseType|tag|version)(?::([0-9A-Za-z]+))?\}/g;
 const DETECT_REGEX = /\{(?:date|git|major|minor|oldVersion|patch|releaseType|tag|version)(?::[0-9A-Za-z]+)?\}/;
@@ -31,11 +31,13 @@ export async function renderMessage(template: string, tokens: Tokens, cwd: strin
 		}
 		else if(name === 'git') {
 			if(!tokens.git) {
-				const result = await loadGitTokens(tokens, cwd);
+				const result = await loadGitTokens(cwd);
 
 				if(result.fails) {
 					return result;
 				}
+
+				tokens.git = result.value;
 			}
 
 			if(!GIT_PROPERTIES.includes(property)) {

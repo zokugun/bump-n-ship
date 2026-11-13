@@ -53,7 +53,7 @@
 	"dependencies": {
 		"@zokugun/cli-utils": "0.4.0",
 		"@zokugun/fs-extra-plus": "0.6.2",
-		"@zokugun/git-toolkit": "0.1.0",
+		"@zokugun/git-toolkit": "0.2.0",
 		"@zokugun/is-it-type": "0.8.1",
 		"@zokugun/text-line-utils": "0.1.0",
 		"@zokugun/xtry": "0.12.1",
