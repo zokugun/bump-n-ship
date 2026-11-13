@@ -1,7 +1,7 @@
 {
 	"name": "@zokugun/bump-n-ship",
 	"description": "Bump your project version, update files, and publish tags or PRs with ease.",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"author": {
 		"name": "Baptiste Augrain",
 		"email": "daiyam@zokugun.org"
