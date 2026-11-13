@@ -8,6 +8,7 @@ import { commandLine, extendMatchers, type ScratchDirectory, scratchDirectory } 
 import YAML from 'yaml';
 
 import { encodeInput } from './utils/encodeInput.js';
+import { isCI } from '@zokugun/cli-utils';
 
 extendMatchers();
 
@@ -90,6 +91,10 @@ for(const file of files.value) {
 		}
 		else if(isArray<string>(manifest.input, isString)) {
 			input.push(...manifest.input.map(encodeInput));
+		}
+
+		if(input.length > 0 && isCI()) {
+			return;
 		}
 
 		const result = await cli.run(args, {

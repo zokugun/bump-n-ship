@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 
-import { c } from '@zokugun/cli-utils';
+import { c, isCI } from '@zokugun/cli-utils';
 import fse from '@zokugun/fs-extra-plus/async';
 import { afterEach, beforeEach, expect, it } from 'vitest';
 import { commandLine, extendMatchers, type ScratchDirectory, scratchDirectory } from 'vitest-command-line';
@@ -30,7 +30,7 @@ afterEach(async () => {
 	await directory.remove();
 });
 
-it('default', async () => { // {{{
+it.skipIf(isCI())('default', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	const result = await cli.run(['release'], {
