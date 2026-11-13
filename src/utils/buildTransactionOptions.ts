@@ -1,4 +1,4 @@
-import type { TxOptions } from '@zokugun/git-toolkit/lib/cjs/types.cjs';
+import type { TxOptions } from '@zokugun/git-toolkit';
 import type { Settings } from '#/publish/types.js';
 
 export function buildTransactionOptions(settings: Settings): TxOptions {

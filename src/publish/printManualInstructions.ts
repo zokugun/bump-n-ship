@@ -1,4 +1,4 @@
-import type { GithubRepo } from '@zokugun/git-toolkit/lib/cjs/types.cjs';
+import type { GithubRepo } from '@zokugun/git-toolkit';
 import type { AsyncDResult } from '@zokugun/xtry';
 import type { Context, Settings } from './types.js';
 
