@@ -93,16 +93,16 @@ for(const file of files.value) {
 			input.push(...manifest.input.map(encodeInput));
 		}
 
-		if((input.length > 0 || (isString(manifest.output) && manifest.output.startsWith('?'))) && isCI()) {
-			return;
-		}
-
 		const result = await cli.run(args, {
 			cwd: directory.path,
 			input,
 			stripAnsi: true,
 			timeout: 1_000,
 		});
+
+		if((input.length > 0 || (isString(manifest.output) && manifest.output.startsWith('?'))) && isCI()) {
+			return;
+		}
 
 		if(isString(manifest.error)) {
 			if(DEBUG && (result.success || !result.stdout.includes('✖ Fatal!') || !result.stdout.includes(manifest.error))) {
