@@ -93,7 +93,7 @@ for(const file of files.value) {
 			input.push(...manifest.input.map(encodeInput));
 		}
 
-		if(input.length > 0 && isCI()) {
+		if((input.length > 0 || (isString(manifest.output) && manifest.output.startsWith('?'))) && isCI()) {
 			return;
 		}
 
