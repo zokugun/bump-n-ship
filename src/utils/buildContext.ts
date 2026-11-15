@@ -14,6 +14,7 @@ export async function buildContext(result: BumpResult, settings: Settings): Asyn
 	}
 
 	return ok({
+		oldVersion: result.oldVersion,
 		tokens: tokens.value,
 		updatedFiles: result.updatedFiles,
 		version: result.version,

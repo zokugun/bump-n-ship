@@ -5,6 +5,7 @@ export type Context = {
 	branchName?: string;
 	commitHeader?: string;
 	commitMessage?: string;
+	oldVersion: SemVer;
 	tagMessage?: string;
 	tagName?: string;
 	tokens: Tokens;
@@ -29,6 +30,7 @@ export type Options = {
 
 export type Settings = {
 	ci: boolean;
+	currentVersion: SemVer;
 	cwd: string;
 	commit: {
 		all: boolean;
@@ -41,6 +43,7 @@ export type Settings = {
 	dirty: boolean;
 	dryRun: boolean;
 	ignoreScripts: boolean;
+	nextVersion?: SemVer;
 	pause: boolean;
 	pullRequest?: {
 		base: string;

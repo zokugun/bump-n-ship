@@ -12,8 +12,8 @@ export type BumpResult = {
 export type FileSettings = {
 	cwd: string;
 	dryRun: boolean;
-	ignoreScripts: boolean
-}
+	ignoreScripts: boolean;
+};
 
 export type Options = {
 	auto?: boolean;

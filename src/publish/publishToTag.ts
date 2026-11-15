@@ -12,7 +12,7 @@ import { propagateNewVersion } from '#/bump/propagateNewVersion.js';
 import { runNpmScript } from '#utils/runNpmScript.js';
 
 export async function publishToTag(context: Context, settings: Settings): AsyncDResult {
-	const propagateResult = await propagateNewVersion(context.version, context.updatedFiles, settings);
+	const propagateResult = await propagateNewVersion(context.oldVersion, context.version, context.updatedFiles, settings);
 
 	if(propagateResult.fails) {
 		return propagateResult;
@@ -30,7 +30,7 @@ export async function publishToTag(context: Context, settings: Settings): AsyncD
 		return tagResult;
 	}
 
-	const scriptResult = await runNpmScript('postversion', settings)
+	const scriptResult = await runNpmScript('postversion', context.oldVersion, context.version, settings)
 
 	if(scriptResult.fails) {
 		return scriptResult;

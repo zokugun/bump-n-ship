@@ -1,6 +1,5 @@
 import type { AsyncDResult, DResult, YResult } from '@zokugun/xtry';
 
-import path from 'node:path';
 import fse from '@zokugun/fs-extra-plus/async';
 import { isBoolean, isNonBlankString, isRecord } from '@zokugun/is-it-type';
 import { err, ok, stringifyError, xtrySync, yerr, yresAsync } from '@zokugun/xtry';
@@ -55,7 +54,7 @@ const CONFIG_FILES: Array<{ name: string; type?: 'json' | 'yaml' }> = [
 
 export async function loadConfig(fileRoot: string): AsyncDResult<Config> { // {{{
 	for(const { name, type } of CONFIG_FILES) {
-		const filename = path.join(fileRoot, name);
+		const filename = fse.join(fileRoot, name);
 		const result = await tryReadConfigFile(filename, fileRoot, name, type);
 
 		if(result.fails || result.success) {

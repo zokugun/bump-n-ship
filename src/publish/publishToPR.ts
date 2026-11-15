@@ -74,7 +74,7 @@ export async function publishToPR(context: Context, settings: Settings): AsyncDR
 
 	logger.success(`Created release branch ${c.bold(context.branchName!)}`)
 
-	const propagateResult = await propagateNewVersion(context.version, context.updatedFiles, settings);
+	const propagateResult = await propagateNewVersion(context.oldVersion, context.version, context.updatedFiles, settings);
 
 	if(propagateResult.fails) {
 		return propagateResult;
@@ -86,7 +86,7 @@ export async function publishToPR(context: Context, settings: Settings): AsyncDR
 		return commitResult;
 	}
 
-	const scriptResult = await runNpmScript('postversion', settings)
+	const scriptResult = await runNpmScript('postversion', context.oldVersion, context.version, settings)
 
 	if(scriptResult.fails) {
 		return scriptResult;

@@ -35,7 +35,7 @@ export async function bump(options: Options): Promise<void> {
 		});
 	}
 
-	unwrapFatal(await propagateNewVersion(result.version, result.updatedFiles, settings));
+	unwrapFatal(await propagateNewVersion(result.oldVersion, result.version, result.updatedFiles, settings));
 
 	logger.finishTimer();
 }

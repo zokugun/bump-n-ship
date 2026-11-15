@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 [Unreleased]
 ------------
 
+### Fixed
+
+- pass `npm_new_version` and `npm_old_version` env variables to npm scripts
+
 ### Chore
 
 - move the `loadGitTokens` function to the `@zokugun/git-toolkit` package

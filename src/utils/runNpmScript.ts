@@ -1,15 +1,16 @@
 import type { AsyncDResult } from '@zokugun/xtry';
+import type { SemVer } from 'verkit';
 import type { FileSettings } from '#/bump/types.js';
 
-import { exec } from '@zokugun/cli-utils/exec';
+import { exec, logger } from '@zokugun/cli-utils';
 import fse from '@zokugun/fs-extra-plus/async';
+import { isNonBlankString } from '@zokugun/is-it-type';
 import { err, OK, stringifyError } from '@zokugun/xtry';
 
 import { loadJSON } from './load-json.js';
-import { isNonBlankString } from '@zokugun/is-it-type';
-import { logger } from '@zokugun/cli-utils';
+import { formatVersion } from './formatVersion.js';
 
-export async function runNpmScript(script: 'postversion' | 'preversion' | 'version', { cwd, dryRun, ignoreScripts }: FileSettings): AsyncDResult {
+export async function runNpmScript(script: 'postversion' | 'preversion' | 'version', oldVersion: SemVer, newVersion: SemVer, { cwd, dryRun, ignoreScripts }: FileSettings): AsyncDResult {
 	if(ignoreScripts) {
 		return OK;
 	}
@@ -33,6 +34,10 @@ export async function runNpmScript(script: 'postversion' | 'preversion' | 'versi
 		else {
 			const result = await exec('npm', ['run', script, '--silent'], {
 				cwd,
+				env: {
+					npm_new_version: formatVersion(newVersion),
+					npm_old_version: formatVersion(oldVersion),
+				},
 				stdio: 'inherit',
 			});
 
