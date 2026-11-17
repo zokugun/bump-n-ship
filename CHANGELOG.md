@@ -5,8 +5,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
-[Unreleased]
-------------
+[v0.1.2] | 2026-11-18
+---------------------
 
 ### Fixed
 
@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog][keepachangelog], and this project adhe
 
 [keepachangelog]: https://keepachangelog.com/en/2.0.0/
 [semver]: https://semver.org/spec/v2.0.0.html
-[unreleased]: https://github.com/zokugun/bump-n-ship/compare/v0.1.1...HEAD
+[unreleased]: https://github.com/zokugun/bump-n-ship/compare/v0.1.2...HEAD
+[v0.1.2]: https://github.com/zokugun/bump-n-ship/releases/tag/v0.1.2
 [v0.1.1]: https://github.com/zokugun/bump-n-ship/releases/tag/v0.1.1
 [v0.1.0]: https://github.com/zokugun/bump-n-ship/releases/tag/v0.1.0
