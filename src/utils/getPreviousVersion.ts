@@ -12,10 +12,10 @@ export async function getPreviousVersion(root: string): AsyncDResult<SemVer> {
 		return err(stringifyError(result.error));
 	}
 
-	const version = tryParse(result.value.all);
+	const version = tryParse(result.value.merged);
 
 	if(!version) {
-		return err(`Invalid SemVer version: ${result.value.all}`);
+		return err(`Invalid SemVer version: ${result.value.merged}`);
 	}
 
 	return ok(version);

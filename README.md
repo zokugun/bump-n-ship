@@ -26,7 +26,7 @@ Installation
 ------------
 
 ```bash
-npm add @zokugun/bump-n-ship
+npm add --save-dev @zokugun/bump-n-ship
 ```
 
 Requirements

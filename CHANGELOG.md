@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][keepachangelog], and this project adheres to [Semantic Versioning][semver].
 
+[Unreleased]
+------------
+
+### Fixed
+
+- fix git command due to extra space in an argument
+
 [v0.1.1] | 2026-11-15
 ---------------------
 
