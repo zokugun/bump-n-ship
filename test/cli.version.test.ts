@@ -1,35 +1,28 @@
+import { createCommand } from '@zokugun/cli-utils';
 import fse from '@zokugun/fs-extra-plus/async';
+import { makeTempDir } from '@zokugun/vitest-toolkit'
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, expect, it } from 'vitest';
-import { commandLine, extendMatchers, type ScratchDirectory, scratchDirectory } from 'vitest-command-line';
 
 import pkg from '../package.json' with { type: 'json' };
 
-extendMatchers();
-
 const root = fse.parentPath(fileURLToPath(import.meta.url));
 const launcher = fse.resolve(root, '../dist/cli.mjs');
-const cli = commandLine({
-	command: ['node', launcher],
-	name: 'bump-n-ship',
-	env: { FORCE_COLOR: '0' },
-});
+const cli = createCommand('node', [launcher], { env: { FORCE_COLOR: '0' } });
 
-let directory: ScratchDirectory;
+let directory: string;
 
 beforeEach(async () => {
-	directory = scratchDirectory();
-
-	await directory.create();
+	directory = await makeTempDir();
 });
 
 afterEach(async () => {
-	await directory.remove();
+	await fse.remove(directory);
 });
 
 it('version', async () => {
-	const result = await cli.run(['--version'], {
-		cwd: directory.path,
+	const result = await cli(['--version'], {
+		cwd: directory,
 		timeout: 1_000,
 	});
 

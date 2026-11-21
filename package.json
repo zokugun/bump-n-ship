@@ -52,7 +52,7 @@
 		"watch:test": "tsc-watch -p test"
 	},
 	"dependencies": {
-		"@zokugun/cli-utils": "0.4.5",
+		"@zokugun/cli-utils": "0.4.6",
 		"@zokugun/fs-extra-plus": "0.7.0",
 		"@zokugun/git-toolkit": "0.2.4",
 		"@zokugun/is-it-type": "0.8.1",
@@ -79,6 +79,7 @@
 		"@zokugun/eslint-config-test": "0.2.0",
 		"@zokugun/eslint-config-ts": "0.3.2",
 		"@zokugun/tsc-leda": "0.9.5",
+		"@zokugun/vitest-toolkit": "0.2.0",
 		"eslint": "10.13.0",
 		"fixpack": "4.0.0",
 		"husky": "9.1.7",
@@ -87,8 +88,7 @@
 		"taze": "19.17.2",
 		"tsc-watch": "7.2.1",
 		"typescript": "5.9.3",
-		"vitest": "4.1.12",
-		"vitest-command-line": "0.9.1"
+		"vitest": "4.1.12"
 	},
 	"overrides": {
 		"@eslint/config-array": {

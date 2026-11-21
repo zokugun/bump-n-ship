@@ -1,5 +1,3 @@
-import type { ScratchDirectory } from 'vitest-command-line';
-
 import fse from '@zokugun/fs-extra-plus/async';
 import { parse } from 'verkit';
 
@@ -8,13 +6,13 @@ import { formatVersion } from '#/utils/formatVersion.js';
 import { incrementVersion } from '#/utils/incrementVersion.js';
 import { git } from './git.js';
 
-export async function createRepository(directory: ScratchDirectory, options?: { pkg?: Record<string, unknown>; nextVersion?: string }): Promise<{ remote: string; repository: string; }> {
-	const repository = fse.join(directory.path, 'repository');
-	const remote = fse.join(directory.path, 'remote.git');
+export async function createRepository(directory: string, options?: { pkg?: Record<string, unknown>; nextVersion?: string }): Promise<{ remote: string; repository: string; }> {
+	const repository = fse.join(directory, 'repository');
+	const remote = fse.join(directory, 'remote.git');
 	const pkg = { name: 'test', version: '1.0.0', ...options?.pkg };
 
 	await fse.mkdir(repository, { recursive: true });
-	await git(directory.path, 'init', '--bare', remote);
+	await git(directory, 'init', '--bare', remote);
 	await git(repository, 'init', '--initial-branch=main');
 	await git(repository, 'config', 'user.name', 'Test User');
 	await git(repository, 'config', 'user.email', 'test@example.com');

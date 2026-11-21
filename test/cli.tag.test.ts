@@ -1,38 +1,31 @@
 /* eslint-disable no-console */
 
+import { createCommand } from '@zokugun/cli-utils';
 import fse from '@zokugun/fs-extra-plus/async';
+import { makeTempDir } from '@zokugun/vitest-toolkit'
 import { afterEach, beforeEach, expect, it } from 'vitest';
-import { commandLine, extendMatchers, type ScratchDirectory, scratchDirectory } from 'vitest-command-line';
 
 import { createRepository } from './utils/createRepository.js';
 import { git } from './utils/git.js';
 
-extendMatchers();
-
 const PROJECT_ROOT = fse.resolve(import.meta.dirname, '..');
 const launcher = fse.resolve(PROJECT_ROOT, 'dist', 'cli.mjs');
-const cli = commandLine({
-	command: ['node', launcher],
-	name: 'bump-n-ship',
-	env: { FORCE_COLOR: '0' },
-});
+const cli = createCommand('node', [launcher], { env: { FORCE_COLOR: '0' } });
 
-let directory: ScratchDirectory;
+let directory: string;
 
 beforeEach(async () => {
-	directory = scratchDirectory();
-
-	await directory.create();
+	directory = await makeTempDir();
 });
 
 afterEach(async () => {
-	await directory.remove();
+	await fse.remove(directory);
 });
 
 it('default', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
-	const result = await cli.run(['tag'], {
+	const result = await cli(['tag'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -50,7 +43,7 @@ it('dirty.nopt', async () => { // {{{
 
 	await fse.writeJSON(fse.join(repository, 'package.json'), { name: 'test', version: '1.0.2' });
 
-	const result = await cli.run(['tag'], {
+	const result = await cli(['tag'], {
 		cwd: repository,
 		stripAnsi: true,
 		timeout: 5_000,
@@ -67,7 +60,7 @@ it('dirty.wopt', async () => { // {{{
 
 	await fse.writeJSON(fse.join(repository, 'package.json'), { name: 'test', version: '1.0.2' });
 
-	const result = await cli.run(['tag', '--dirty'], {
+	const result = await cli(['tag', '--dirty'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -84,7 +77,7 @@ it('opt.all.dirty=cfg', async () => { // {{{
 	await fse.writeJSON(fse.join(repository, '.bumpnshiprc.json'), { publish: { dirty: true } });
 	await fse.writeFile(fse.join(repository, 'extra.txt'), 'included by --all');
 
-	const result = await cli.run(['tag', '--all'], {
+	const result = await cli(['tag', '--all'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -98,7 +91,7 @@ it('opt.all.dirty=opt', async () => { // {{{
 
 	await fse.writeFile(fse.join(repository, 'extra.txt'), 'included by --all');
 
-	const result = await cli.run(['tag', '--all', '--dirty'], {
+	const result = await cli(['tag', '--all', '--dirty'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -110,7 +103,7 @@ it('opt.all.dirty=opt', async () => { // {{{
 it('opt.commit', async () => { // {{{
 	const { repository } = await createRepository(directory);
 
-	const result = await cli.run(['tag', '--commit', 'release: 1.0.1'], {
+	const result = await cli(['tag', '--commit', 'release: 1.0.1'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -123,7 +116,7 @@ it('opt.dry-run', async () => { // {{{
 	const { repository } = await createRepository(directory);
 	const originalHead = await git(repository, 'rev-parse', 'HEAD');
 
-	const result = await cli.run(['tag', '--dry-run'], {
+	const result = await cli(['tag', '--dry-run'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -139,7 +132,7 @@ it('opt.dry-run', async () => { // {{{
 it('opt.ignore-scripts.ok', async () => { // {{{
 	const { repository } = await createRepository(directory, { pkg: { scripts: { postversion: 'node -e "process.exit(1)"' } } });
 
-	const result = await cli.run(['tag', '--ignore-scripts'], {
+	const result = await cli(['tag', '--ignore-scripts'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -152,7 +145,7 @@ it('opt.ignore-scripts.nok.ndirt', async () => { // {{{
 	const { repository } = await createRepository(directory, { pkg: { scripts: { postversion: 'node -e "process.exit(1)"' } } });
 	const originalHead = await git(repository, 'rev-parse', 'HEAD');
 
-	const result = await cli.run(['tag'], {
+	const result = await cli(['tag'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -171,7 +164,7 @@ it('opt.ignore-scripts.nok.wdirt', async () => { // {{{
 
 	await fse.writeFile(fse.join(repository, 'extra.txt'), 'included by --all');
 
-	const result = await cli.run(['tag', '--all', '--dirty'], {
+	const result = await cli(['tag', '--all', '--dirty'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -196,7 +189,7 @@ it('opt.no-verify.ok', async () => { // {{{
 	await fse.writeFile(hook, '#!/bin/sh\nexit 1\n');
 	await fse.chmod(hook, 0o755);
 
-	const result = await cli.run(['tag', '--no-verify'], {
+	const result = await cli(['tag', '--no-verify'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -212,7 +205,7 @@ it('opt.no-verify.nok', async () => { // {{{
 	await fse.writeFile(hook, '#!/bin/sh\nexit 1\n');
 	await fse.chmod(hook, 0o755);
 
-	const result = await cli.run(['tag'], {
+	const result = await cli(['tag'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -226,7 +219,7 @@ it('opt.no-verify.nok', async () => { // {{{
 it('opt.pr', async () => { // {{{
 	const { repository } = await createRepository(directory);
 
-	const result = await cli.run(['tag', '--pr'], {
+	const result = await cli(['tag', '--pr'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
@@ -238,7 +231,7 @@ it('opt.pr', async () => { // {{{
 it('opt.tag', async () => { // {{{
 	const { repository } = await createRepository(directory);
 
-	const result = await cli.run(['tag', '--tag', 'release-1.0.1'], {
+	const result = await cli(['tag', '--tag', 'release-1.0.1'], {
 		cwd: repository,
 		timeout: 5_000,
 	});
