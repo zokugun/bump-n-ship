@@ -12,6 +12,7 @@ Templates use braces around a variable name. Some variables take a format or pro
 | `publish.tag.name`, `--tag`                                                           | Tag name               | All message variables except `tag` |
 | `publish.tag.message`                                                                 | Tag annotation         | All message variables below        |
 | `publish.pullRequest.branch`, `publish.pullRequest.title`, `publish.pullRequest.body` | Pull request           | All message variables below        |
+| `publish.whenComplete.open`                                                           | URL to open            | All message variables below        |
 
 ## Date
 
@@ -52,7 +53,7 @@ This starts at `beta.1`, then increments to `beta.2` on the next compatible prer
 
 ## Version and Publish Variables
 
-These variables are available in commit messages, tag messages, and pull request branch/title/body templates. They are also available while constructing `publish.tag.name`, except for `{tag}` itself.
+These variables are available in commit messages, tag messages, pull request branch/title/body templates, and `publish.whenComplete.open`. They are also available while constructing `publish.tag.name`, except for `{tag}` itself.
 
 | Variable        | Value                                                  |
 | --------------- | ------------------------------------------------------ |

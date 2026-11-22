@@ -8,6 +8,7 @@ import { bump } from '#/bump/bump.js';
 import { configure as configureBump } from '#/bump/configure.js';
 import { Mode } from '#/bump/mode.js';
 import { configure as configurePublish } from '#/publish/configure.js';
+import { openWhenComplete } from '#/publish/openWhenComplete.js';
 import { publishToPR } from '#/publish/publishToPR.js';
 import { publishToTag } from '#/publish/publishToTag.js';
 import { renderMessages } from '#/publish/renderMessages.js';
@@ -77,6 +78,8 @@ export async function release(options: Options): Promise<void> {
 			return await publishToTag(context, publishSettings);
 		}
 	}, txOptions));
+
+	await openWhenComplete(context.completionUrl, publishSettings.dryRun);
 
 	logger.finishTimer();
 }

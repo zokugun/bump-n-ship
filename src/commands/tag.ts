@@ -6,6 +6,7 @@ import { difference } from 'verkit';
 
 import { BumpResult } from '#/bump/types.js';
 import { configure } from '#/publish/configure.js';
+import { openWhenComplete } from '#/publish/openWhenComplete.js';
 import { publishToTag } from '#/publish/publishToTag.js';
 import { renderMessages } from '#/publish/renderMessages.js';
 import { buildContext } from '#utils/buildContext.js';
@@ -67,6 +68,8 @@ export async function tag(options: Options): Promise<void> {
 
 		return await publishToTag(context, settings);
 	}, txOptions));
+
+	await openWhenComplete(context.completionUrl, settings.dryRun);
 
 	logger.finishTimer();
 }

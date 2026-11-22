@@ -1,12 +1,13 @@
 import type { AsyncDResult } from '@zokugun/xtry';
 import type { Context, Settings } from './types.js';
 
-import { isString } from '@zokugun/is-it-type';
+import { isNonBlankString, isString } from '@zokugun/is-it-type';
 import { OK } from '@zokugun/xtry';
 
 import { renderMessage } from '#utils/template/renderMessage.js';
+import { renderUrl } from '#/utils/template/renderUrl.js';
 
-export async function renderMessages(context: Context, { commit: { body, footer, header }, cwd, pullRequest, tag }: Settings): AsyncDResult {
+export async function renderMessages(context: Context, { ci, commit: { body, footer, header }, cwd, pullRequest, tag, whenComplete }: Settings): AsyncDResult {
 	let message = header;
 
 	if(isString(body)) {
@@ -51,6 +52,16 @@ export async function renderMessages(context: Context, { commit: { body, footer,
 		}
 
 		context.tagMessage = tagMessage.value
+	}
+
+	if(!ci && isNonBlankString<string>(whenComplete?.open)) {
+		const completionUrl = await renderUrl(whenComplete.open, context.tokens, cwd);
+
+		if(completionUrl.fails) {
+			return completionUrl;
+		}
+
+		context.completionUrl = completionUrl.value;
 	}
 
 	return OK;

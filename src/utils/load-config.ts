@@ -37,6 +37,9 @@ export type Config = {
 			message?: string;
 		};
 		verify: boolean;
+		whenComplete?: {
+			open?: string;
+		};
 	}
 }
 
@@ -95,7 +98,7 @@ async function normalizeConfig(data: unknown, root: string, source: string): Asy
 	};
 
 	if(isRecord(data.publish)) {
-		const { all, commit, dirty, pullRequest, remote, sign, tag, verify } = data.publish;
+		const { all, commit, dirty, pullRequest, remote, sign, tag, verify, whenComplete } = data.publish;
 
 		if(isBoolean(all)) {
 			publish.all = all;
@@ -167,6 +170,14 @@ async function normalizeConfig(data: unknown, root: string, source: string): Asy
 
 		if(isBoolean(verify)) {
 			publish.verify = verify;
+		}
+
+		if(isRecord(whenComplete)) {
+			publish.whenComplete = {};
+
+			if(isNonBlankString<string>(whenComplete.open)) {
+				publish.whenComplete.open = whenComplete.open.trim();
+			}
 		}
 	}
 

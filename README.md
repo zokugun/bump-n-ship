@@ -221,6 +221,8 @@ publish:
     branch: 'release/{tag}'
     title: 'chore: release {tag}'
     body: '{oldVersion} → {version}'
+  whenComplete:
+    open: 'https://example.com/releases/{version}'
 
 interactive:
    version: pause

@@ -33,6 +33,7 @@ export async function configure(options: Options, allowPR: boolean): AsyncDResul
 		interactive: config.interactive,
 		remote: config.publish.remote,
 		sign: options.sign ?? config.publish.sign,
+		whenComplete: config.publish.whenComplete,
 	};
 
 	if(allowPR && (options.pr ?? config.publish.pullRequest)) {

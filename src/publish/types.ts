@@ -5,6 +5,7 @@ export type Context = {
 	branchName?: string;
 	commitHeader?: string;
 	commitMessage?: string;
+	completionUrl?: string;
 	oldVersion: SemVer;
 	tagMessage?: string;
 	tagName?: string;
@@ -61,5 +62,8 @@ export type Settings = {
 	tag?: {
 		name: string;
 		message: string;
+	};
+	whenComplete?: {
+		open?: string;
 	};
 }
