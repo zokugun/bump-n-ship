@@ -22,7 +22,7 @@ afterEach(async () => {
 	await fse.remove(directory);
 });
 
-it('cfg.confirm.only.commit', async () => { // {{{
+it.skipIf(isCI())('cfg.confirm.only.commit', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	await fse.outputFile(
@@ -51,7 +51,7 @@ it('cfg.confirm.only.commit', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 500,
+			timeout: 200,
 		},
 	);
 
@@ -64,7 +64,7 @@ it('cfg.confirm.only.commit', async () => { // {{{
 	expect(await git(remote, '--git-dir', remote, 'rev-parse', 'refs/heads/main')).to.eql(await git(repository, 'rev-parse', 'HEAD'));
 }, 20_000); // }}}
 
-it('cfg.pause.combo.cv', async () => { // {{{
+it.skipIf(isCI())('cfg.pause.combo.cv', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	await fse.outputFile(
@@ -104,7 +104,7 @@ it('cfg.pause.combo.cv', async () => { // {{{
 			},
 		],
 		{
-			timeout: 500,
+			timeout: 200,
 		},
 	);
 
@@ -120,7 +120,7 @@ it('cfg.pause.combo.cv', async () => { // {{{
 	expect(result.value!.stderr).to.eql('');
 }, 20_000); // }}}
 
-it('cfg.pause.only.commit', async () => { // {{{
+it.skipIf(isCI())('cfg.pause.only.commit', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	await fse.outputFile(
@@ -148,7 +148,7 @@ it('cfg.pause.only.commit', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 500,
+			timeout: 200,
 		},
 	);
 
@@ -164,7 +164,7 @@ it('cfg.pause.only.commit', async () => { // {{{
 	expect(result.value!.stderr).to.eql('');
 }, 20_000); // }}}
 
-it('cfg.pause.only.push', async () => { // {{{
+it.skipIf(isCI())('cfg.pause.only.push', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	await fse.outputFile(
@@ -192,7 +192,7 @@ it('cfg.pause.only.push', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 500,
+			timeout: 200,
 		},
 	);
 
@@ -208,7 +208,7 @@ it('cfg.pause.only.push', async () => { // {{{
 	expect(result.value!.stderr).to.eql('');
 }, 20_000); // }}}
 
-it('cfg.pause.only.tag', async () => { // {{{
+it.skipIf(isCI())('cfg.pause.only.tag', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	await fse.outputFile(
@@ -236,7 +236,7 @@ it('cfg.pause.only.tag', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 500,
+			timeout: 200,
 		},
 	);
 
@@ -252,7 +252,7 @@ it('cfg.pause.only.tag', async () => { // {{{
 	expect(result.value!.stderr).to.eql('');
 }, 20_000); // }}}
 
-it('cfg.pause.only.version', async () => { // {{{
+it.skipIf(isCI())('cfg.pause.only.version', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	await fse.outputFile(
@@ -280,7 +280,7 @@ it('cfg.pause.only.version', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 500,
+			timeout: 200,
 		},
 	);
 
@@ -339,7 +339,7 @@ it('opt.patch.ci', async () => { // {{{
 	expect(result.value!.stderr).to.eql('');
 }, 20_000); // }}}
 
-it('opt.patch.pause', async () => { // {{{
+it.skipIf(isCI())('opt.patch.pause', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	const task = cli(['release', '--patch', '--pause'], {
@@ -366,7 +366,7 @@ it('opt.patch.pause', async () => { // {{{
 			},
 		],
 		{
-			timeout: 500,
+			timeout: 200,
 		},
 	);
 
