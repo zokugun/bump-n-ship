@@ -26,12 +26,11 @@ export async function configure(options: Options, allowPR: boolean): AsyncDResul
 
 	const settings: Partial<Settings> = {
 		ci: options.ci ?? isCI(),
-		confirm: options.confirm ?? false,
 		cwd: root,
 		dirty: options.dirty ?? config.publish.dirty,
 		dryRun: options.dryRun ?? false,
 		ignoreScripts: options.ignoreScripts ?? false,
-		pause: options.pause ?? false,
+		interactive: config.interactive,
 		remote: config.publish.remote,
 		sign: options.sign ?? config.publish.sign,
 	};
@@ -89,6 +88,26 @@ export async function configure(options: Options, allowPR: boolean): AsyncDResul
 			header: config.publish.commit?.header ?? '{version}',
 			verify: options.verify ?? config.publish.verify,
 		}
+	}
+
+	if(options.pause) {
+		settings.interactive ??= {};
+
+		settings.interactive.version = 'pause';
+		settings.interactive.commit = 'pause';
+	}
+
+	if(options.confirm) {
+		settings.interactive ??= {};
+
+		settings.interactive.version = 'confirm';
+		settings.interactive.commit = 'confirm';
+		settings.interactive.tag = 'confirm';
+		settings.interactive.push = 'confirm';
+	}
+
+	if(settings.ci && settings.interactive) {
+		return err('Cannot be interactive in CI');
 	}
 
 	return ok(settings as Settings);

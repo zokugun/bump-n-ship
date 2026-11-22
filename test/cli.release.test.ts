@@ -2,7 +2,7 @@
 
 import { c, createCommand, isCI } from '@zokugun/cli-utils';
 import fse from '@zokugun/fs-extra-plus/async';
-import { makeTempDir, mocks } from '@zokugun/vitest-toolkit';
+import { createStdinStream, makeTempDir, respondToInteractiveProcess, YAML } from '@zokugun/vitest-toolkit';
 import { afterEach, beforeEach, expect, it } from 'vitest';
 
 import { createRepository } from './utils/createRepository.js';
@@ -22,12 +22,286 @@ afterEach(async () => {
 	await fse.remove(directory);
 });
 
+it('cfg.confirm.only.commit', async () => { // {{{
+	const { remote, repository } = await createRepository(directory);
+
+	await fse.outputFile(
+		fse.join(repository, '.bumpnshiprc.yml'),
+		YAML.stringify({
+			interactive: { commit: 'confirm' }
+		}
+	));
+
+	await git(repository, 'add', '.bumpnshiprc.yml');
+	await git(repository, 'commit', '--message', 'use config file');
+
+	const task = cli(['release', '--minor'], {
+		cwd: repository,
+		env: { FORCE_COLOR: '0' },
+		timeout: 5_000,
+	});
+
+	respondToInteractiveProcess(
+		task,
+		[{
+			on: [
+				'M package.json',
+				'Commit (1.1.0) (Y/n) › Yes'
+			],
+			send: '<enter>',
+		}],
+		{
+			timeout: 200,
+		},
+	);
+
+	const result = await task;
+
+	expect(result).toSucceed();
+	expect(await git(repository, 'log', '-1', '--pretty=%s')).to.eql('1.1.0');
+	expect(await git(repository, 'tag', '--list')).to.contain('1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'show-ref', '--tags', '1.1.0')).to.contain('refs/tags/1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'rev-parse', 'refs/heads/main')).to.eql(await git(repository, 'rev-parse', 'HEAD'));
+}, 20_000); // }}}
+
+it('cfg.pause.combo.cv', async () => { // {{{
+	const { remote, repository } = await createRepository(directory);
+
+	await fse.outputFile(
+		fse.join(repository, '.bumpnshiprc.yml'),
+		YAML.stringify({
+			interactive: {
+				commit: 'pause',
+				version: 'pause'
+			}
+		}
+	));
+
+	await git(repository, 'add', '.bumpnshiprc.yml');
+	await git(repository, 'commit', '--message', 'use config file');
+
+	const task = cli(['release', '--minor'], {
+		cwd: repository,
+		timeout: 5_000,
+	});
+
+	respondToInteractiveProcess(
+		task,
+		[
+			{
+				on: [
+					`${c.gray(c.symbols.pointer)} Tag (1.1.0)`,
+					'Press ENTER to continue...',
+				],
+				send: '<enter>',
+			},
+			{
+				on: [
+					'M package.json',
+					'Press ENTER to continue...',
+				],
+				send: '<enter>',
+			},
+		],
+		{
+			timeout: 200,
+		},
+	);
+
+	const result = await task;
+
+	expect(result).toSucceed();
+	expect(await git(repository, 'log', '-1', '--pretty=%s')).to.eql('1.1.0');
+	expect(await git(repository, 'tag', '--list')).to.contain('1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'show-ref', '--tags', '1.1.0')).to.contain('refs/tags/1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'rev-parse', 'refs/heads/main')).to.eql(await git(repository, 'rev-parse', 'HEAD'));
+
+	expect(result).toHaveStdout('Press ENTER to continue...');
+	expect(result.value!.stderr).to.eql('');
+}, 20_000); // }}}
+
+it('cfg.pause.only.commit', async () => { // {{{
+	const { remote, repository } = await createRepository(directory);
+
+	await fse.outputFile(
+		fse.join(repository, '.bumpnshiprc.yml'),
+		YAML.stringify({
+			interactive: { commit: 'pause' }
+		}
+	));
+
+	await git(repository, 'add', '.bumpnshiprc.yml');
+	await git(repository, 'commit', '--message', 'use config file');
+
+	const task = cli(['release', '--minor'], {
+		cwd: repository,
+		timeout: 5_000,
+	});
+
+	respondToInteractiveProcess(
+		task,
+		[{
+			on: [
+				'M package.json',
+				'Press ENTER to continue...',
+			],
+			send: '<enter>',
+		}],
+		{
+			timeout: 200,
+		},
+	);
+
+	const result = await task;
+
+	expect(result).toSucceed();
+	expect(await git(repository, 'log', '-1', '--pretty=%s')).to.eql('1.1.0');
+	expect(await git(repository, 'tag', '--list')).to.contain('1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'show-ref', '--tags', '1.1.0')).to.contain('refs/tags/1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'rev-parse', 'refs/heads/main')).to.eql(await git(repository, 'rev-parse', 'HEAD'));
+
+	expect(result).toHaveStdout('Press ENTER to continue...');
+	expect(result.value!.stderr).to.eql('');
+}, 20_000); // }}}
+
+it('cfg.pause.only.push', async () => { // {{{
+	const { remote, repository } = await createRepository(directory);
+
+	await fse.outputFile(
+		fse.join(repository, '.bumpnshiprc.yml'),
+		YAML.stringify({
+			interactive: { push: 'pause' }
+		}
+	));
+
+	await git(repository, 'add', '.bumpnshiprc.yml');
+	await git(repository, 'commit', '--message', 'use config file');
+
+	const task = cli(['release', '--minor'], {
+		cwd: repository,
+		timeout: 5_000,
+	});
+
+	respondToInteractiveProcess(
+		task,
+		[{
+			on: [
+				`${c.green(c.symbols.check)} Tag (1.1.0)`,
+				'Press ENTER to continue...',
+			],
+			send: '<enter>',
+		}],
+		{
+			timeout: 200,
+		},
+	);
+
+	const result = await task;
+
+	expect(result).toSucceed();
+	expect(await git(repository, 'log', '-1', '--pretty=%s')).to.eql('1.1.0');
+	expect(await git(repository, 'tag', '--list')).to.contain('1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'show-ref', '--tags', '1.1.0')).to.contain('refs/tags/1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'rev-parse', 'refs/heads/main')).to.eql(await git(repository, 'rev-parse', 'HEAD'));
+
+	expect(result).toHaveStdout('Press ENTER to continue...');
+	expect(result.value!.stderr).to.eql('');
+}, 20_000); // }}}
+
+it('cfg.pause.only.tag', async () => { // {{{
+	const { remote, repository } = await createRepository(directory);
+
+	await fse.outputFile(
+		fse.join(repository, '.bumpnshiprc.yml'),
+		YAML.stringify({
+			interactive: { tag: 'pause' }
+		}
+	));
+
+	await git(repository, 'add', '.bumpnshiprc.yml');
+	await git(repository, 'commit', '--message', 'use config file');
+
+	const task = cli(['release', '--minor'], {
+		cwd: repository,
+		timeout: 5_000,
+	});
+
+	respondToInteractiveProcess(
+		task,
+		[{
+			on: [
+				`${c.green(c.symbols.check)} Commit (1.1.0)`,
+				'Press ENTER to continue...',
+			],
+			send: '<enter>',
+		}],
+		{
+			timeout: 200,
+		},
+	);
+
+	const result = await task;
+
+	expect(result).toSucceed();
+	expect(await git(repository, 'log', '-1', '--pretty=%s')).to.eql('1.1.0');
+	expect(await git(repository, 'tag', '--list')).to.contain('1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'show-ref', '--tags', '1.1.0')).to.contain('refs/tags/1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'rev-parse', 'refs/heads/main')).to.eql(await git(repository, 'rev-parse', 'HEAD'));
+
+	expect(result).toHaveStdout('Press ENTER to continue...');
+	expect(result.value!.stderr).to.eql('');
+}, 20_000); // }}}
+
+it('cfg.pause.only.version', async () => { // {{{
+	const { remote, repository } = await createRepository(directory);
+
+	await fse.outputFile(
+		fse.join(repository, '.bumpnshiprc.yml'),
+		YAML.stringify({
+			interactive: { version: 'pause' }
+		}
+	));
+
+	await git(repository, 'add', '.bumpnshiprc.yml');
+	await git(repository, 'commit', '--message', 'use config file');
+
+	const task = cli(['release', '--minor'], {
+		cwd: repository,
+		timeout: 5_000,
+	});
+
+	respondToInteractiveProcess(
+		task,
+		[{
+			on: [
+				`${c.gray(c.symbols.pointer)} Tag (1.1.0)`,
+				'Press ENTER to continue...',
+			],
+			send: '<enter>',
+		}],
+		{
+			timeout: 200,
+		},
+	);
+
+	const result = await task;
+
+	expect(result).toSucceed();
+	expect(await git(repository, 'log', '-1', '--pretty=%s')).to.eql('1.1.0');
+	expect(await git(repository, 'tag', '--list')).to.contain('1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'show-ref', '--tags', '1.1.0')).to.contain('refs/tags/1.1.0');
+	expect(await git(remote, '--git-dir', remote, 'rev-parse', 'refs/heads/main')).to.eql(await git(repository, 'rev-parse', 'HEAD'));
+
+	expect(result).toHaveStdout('Press ENTER to continue...');
+	expect(result.value!.stderr).to.eql('');
+}, 20_000); // }}}
+
 it.skipIf(isCI())('default', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
 	const result = await cli(['release'], {
 		cwd: repository,
-		stdin: mocks.stdin('<enter>'),
+		stdin: createStdinStream('<enter>'),
 		timeout: 5_000,
 	});
 
@@ -68,11 +342,35 @@ it('opt.patch.ci', async () => { // {{{
 it('opt.patch.pause', async () => { // {{{
 	const { remote, repository } = await createRepository(directory);
 
-	const result = await cli(['release', '--patch', '--pause'], {
+	const task = cli(['release', '--patch', '--pause'], {
 		cwd: repository,
-		stdin: mocks.stdin(['<enter>', '<enter>', '<enter>'], 200),
 		timeout: 5_000,
 	});
+
+	respondToInteractiveProcess(
+		task,
+		[
+			{
+				on: [
+					`${c.gray(c.symbols.pointer)} Tag (1.0.2)`,
+					'Press ENTER to continue...',
+				],
+				send: '<enter>',
+			},
+			{
+				on: [
+					'M package.json',
+					'Press ENTER to continue...',
+				],
+				send: '<enter>',
+			},
+		],
+		{
+			timeout: 200,
+		},
+	);
+
+	const result = await task;
 
 	expect(result).toSucceed();
 	expect(await git(repository, 'log', '-1', '--pretty=%s')).to.eql('1.0.2');
@@ -92,7 +390,7 @@ it('opt.patch.pr', async () => { // {{{
 
 	const result = await cli(['release', '--patch', '--pr'], {
 		cwd: repository,
-		stdin: mocks.stdin('<enter>'),
+		stdin: createStdinStream('<enter>'),
 		timeout: 5_000,
 	});
 

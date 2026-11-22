@@ -11,12 +11,23 @@ export async function pushBranch(_context: Context, settings: Settings): AsyncDR
 
 	let done: (() => void) | undefined
 
-	if(settings.confirm) {
-		await enquirer.prompt(confirm({
-			name: 'push',
-			message: `Push`,
-			initial: true,
-		}));
+	if(settings.interactive?.push) {
+		if(settings.interactive.push === 'confirm') {
+			await enquirer.prompt(confirm({
+				name: 'push',
+				message: `Push`,
+				initial: true,
+			}));
+		}
+		else {
+			await enquirer.prompt({
+				type: 'invisible',
+				name: 'pause',
+				message: 'Press ENTER to continue...',
+			});
+
+			done = logger.createStep(`Push`, successfulStep);
+		}
 	}
 	else {
 		done = logger.createStep(`Push`, successfulStep);

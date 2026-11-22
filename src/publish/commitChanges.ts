@@ -25,22 +25,25 @@ export async function commitChanges({ commitHeader, commitMessage, updatedFiles 
 
 	let done: (() => void) | undefined
 
-	if(settings.confirm) {
-		await enquirer.prompt(confirm({
-			name: 'commit',
-			message: `Commit (${commitHeader})`,
-			initial: true,
-		}));
-	}
-	else {
-		if(settings.pause) {
+	if(settings.interactive?.commit) {
+		if(settings.interactive.commit === 'confirm') {
+			await enquirer.prompt(confirm({
+				name: 'commit',
+				message: `Commit (${commitHeader})`,
+				initial: true,
+			}));
+		}
+		else {
 			await enquirer.prompt({
 				type: 'invisible',
 				name: 'pause',
 				message: 'Press ENTER to continue...',
 			});
-		}
 
+			done = logger.createStep(`Commit (${commitHeader})`, successfulStep);
+		}
+	}
+	else {
 		done = logger.createStep(`Commit (${commitHeader})`, successfulStep);
 	}
 

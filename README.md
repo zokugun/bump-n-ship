@@ -221,6 +221,12 @@ publish:
     branch: 'release/{tag}'
     title: 'chore: release {tag}'
     body: '{oldVersion} → {version}'
+
+interactive:
+   version: pause
+   commit: pause
+   tag: confirm
+   push: confirm
 ```
 
 Template Variables

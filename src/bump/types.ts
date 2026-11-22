@@ -40,6 +40,9 @@ export type Settings = {
 	dryRun: boolean;
 	ignoreScripts: boolean;
 	isCurrentlyPreRelease: boolean;
+	interactive?: {
+		version?: 'confirm' | 'pause';
+	},
 	mode: Mode;
 	nextVersion?: SemVer;
 	preRelease: string;

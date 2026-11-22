@@ -25,6 +25,7 @@ export async function configure(options: Options): AsyncDResult<Settings> {
 		cwd: root,
 		dryRun: options.dryRun ?? false,
 		ignoreScripts: options.ignoreScripts ?? false,
+		interactive: config.interactive,
 		mode: Mode.Prompt,
 		preRelease: config.bump.preRelease,
 	};
@@ -128,6 +129,16 @@ export async function configure(options: Options): AsyncDResult<Settings> {
 	}
 	else if(options.pre) {
 		settings.mode = settings.mode! | Mode.PreRelease;
+	}
+
+	if(options.pause) {
+		settings.interactive ??= {};
+
+		settings.interactive.version = 'pause';
+	}
+
+	if(settings.ci && settings.interactive) {
+		return err('Cannot be interactive in CI');
 	}
 
 	return ok(settings as Settings)

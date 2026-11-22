@@ -1,6 +1,6 @@
 import type { Options } from '#/publish/types.js';
 
-import { c, enquirer, logger, unwrapFatal } from '@zokugun/cli-utils';
+import { c, confirm, enquirer, logger, unwrapFatal } from '@zokugun/cli-utils';
 import { isWorkingDirectoryClean, withGitTransaction } from '@zokugun/git-toolkit';
 import { difference } from 'verkit';
 
@@ -44,22 +44,26 @@ export async function tag(options: Options): Promise<void> {
 	const txOptions = buildTransactionOptions(settings);
 
 	unwrapFatal(await withGitTransaction(async () => {
-		if(options.pause) {
-			if(settings.ci) {
-				logger.fatal('Cannot pause in CI');
-			}
-
+		if(settings.interactive?.version) {
 			logger.print(`${c.gray(c.symbols.pointer)} Version (${formatVersion(result.version)})`);
 			logger.print(`${c.gray(c.symbols.pointer)} Commit (${context.commitHeader})`);
 			logger.print(`${c.gray(c.symbols.pointer)} Tag (${context.tagName})`);
 
-			await enquirer.prompt({
-				type: 'invisible',
-				name: 'pause',
-				message: settings.commit.all ? 'Modify the files as needed, then press ENTER to continue...' : 'Press ENTER to continue...',
-			});
+			if(settings.interactive.version === 'confirm') {
+				await enquirer.prompt(confirm({
+					name: 'commit',
+					message: `Are the data ok?`,
+					initial: true,
+				}));
+			}
+			else {
+				await enquirer.prompt({
+					type: 'invisible',
+					name: 'pause',
+					message: settings.commit.all ? 'Modify the files as needed, then press ENTER to continue...' : 'Press ENTER to continue...',
+				});
+			}
 		}
-
 
 		return await publishToTag(context, settings);
 	}, txOptions));

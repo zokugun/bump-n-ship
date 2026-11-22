@@ -11,12 +11,23 @@ export async function tagCommit({ tagMessage, tagName }: Context, settings: Sett
 
 	let done: (() => void) | undefined
 
-	if(settings.confirm) {
-		await enquirer.prompt(confirm({
-			name: 'commit',
-			message: `Tag (${tagName})`,
-			initial: true,
-		}));
+	if(settings.interactive?.tag) {
+		if(settings.interactive.tag === 'confirm') {
+			await enquirer.prompt(confirm({
+				name: 'commit',
+				message: `Tag (${tagName})`,
+				initial: true,
+			}));
+		}
+		else {
+			await enquirer.prompt({
+				type: 'invisible',
+				name: 'pause',
+				message: 'Press ENTER to continue...',
+			});
+
+			done = logger.createStep(`Tag (${tagName})`, successfulStep);
+		}
 	}
 	else {
 		done = logger.createStep(`Tag (${tagName})`, successfulStep);

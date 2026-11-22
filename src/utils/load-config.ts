@@ -9,6 +9,12 @@ export type Config = {
 	bump: {
 		preRelease: string
 	},
+	interactive?: {
+		commit?: 'confirm' | 'pause';
+		push?: 'confirm' | 'pause';
+		tag?: 'confirm' | 'pause';
+		version?: 'confirm' | 'pause';
+	},
 	publish: {
 		all: boolean;
 		commit?: {
@@ -164,8 +170,25 @@ async function normalizeConfig(data: unknown, root: string, source: string): Asy
 		}
 	}
 
+	let interactive: Config['interactive'];
+
+	if(isRecord(data.interactive)) {
+		interactive = {};
+
+		for(const key of ['commit', 'push', 'tag', 'version']) {
+			if(isNonBlankString<string>(data.interactive[key])) {
+				const value = data.interactive[key].trim();
+
+				if(value === 'confirm' || value === 'pause') {
+					interactive[key] = value;
+				}
+			}
+		}
+	}
+
 	return ok({
 		bump,
+		interactive,
 		publish,
 	});
 } // }}}

@@ -1,6 +1,6 @@
 import type { Options } from '../bump/types.js';
 
-import { c, enquirer, logger, unwrapFatal } from '@zokugun/cli-utils';
+import { c, confirm, enquirer, logger, unwrapFatal } from '@zokugun/cli-utils';
 
 import { bump as doBump } from '#/bump/bump.js';
 import { configure } from '#/bump/configure.js';
@@ -19,20 +19,25 @@ export async function bump(options: Options): Promise<void> {
 
 	const result = unwrapFatal(await doBump(settings));
 
-	if(options.pause) {
-		if(settings.ci) {
-			logger.fatal('Cannot pause in CI');
+	if(settings.interactive?.version) {
+		if(settings.interactive.version === 'confirm') {
+			await enquirer.prompt(confirm({
+				name: 'commit',
+				message: `Next version (${formatVersion(result.version)})`,
+				initial: true,
+			}));
 		}
+		else {
+			if(!(settings.mode & Mode.Prompt)) {
+				logger.print(`${c.gray(c.symbols.pointer)} Next version (${formatVersion(result.version)})`);
+			}
 
-		if(!(settings.mode & Mode.Prompt)) {
-			logger.print(`${c.gray(c.symbols.pointer)} Next version (${formatVersion(result.version)})`);
+			await enquirer.prompt({
+				type: 'invisible',
+				name: 'pause',
+				message: 'Press ENTER to continue...',
+			});
 		}
-
-		await enquirer.prompt({
-			type: 'invisible',
-			name: 'pause',
-			message: 'Press ENTER to continue...',
-		});
 	}
 
 	unwrapFatal(await propagateNewVersion(result.oldVersion, result.version, result.updatedFiles, settings));

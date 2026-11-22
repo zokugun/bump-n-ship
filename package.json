@@ -53,7 +53,7 @@
 	},
 	"dependencies": {
 		"@zokugun/cli-utils": "0.4.6",
-		"@zokugun/fs-extra-plus": "0.7.0",
+		"@zokugun/fs-extra-plus": "0.8.1",
 		"@zokugun/git-toolkit": "0.2.4",
 		"@zokugun/is-it-type": "0.8.1",
 		"@zokugun/text-line-utils": "0.1.0",
@@ -79,7 +79,7 @@
 		"@zokugun/eslint-config-test": "0.2.0",
 		"@zokugun/eslint-config-ts": "0.3.2",
 		"@zokugun/tsc-leda": "0.9.5",
-		"@zokugun/vitest-toolkit": "0.2.0",
+		"@zokugun/vitest-toolkit": "0.3.0",
 		"eslint": "10.13.0",
 		"fixpack": "4.0.0",
 		"husky": "9.1.7",

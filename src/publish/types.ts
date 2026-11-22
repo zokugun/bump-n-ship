@@ -39,12 +39,16 @@ export type Settings = {
 		header: string;
 		verify: boolean;
 	};
-	confirm: boolean;
 	dirty: boolean;
 	dryRun: boolean;
 	ignoreScripts: boolean;
+	interactive: {
+		commit?: 'confirm' | 'pause';
+		push?: 'confirm' | 'pause';
+		tag?: 'confirm' | 'pause';
+		version?: 'confirm' | 'pause';
+	},
 	nextVersion?: SemVer;
-	pause: boolean;
 	pullRequest?: {
 		base: string;
 		body: string;

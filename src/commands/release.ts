@@ -1,7 +1,7 @@
 import type { Options as BumpOptions } from '#/bump/types.js';
 import type { Options as PublishOptions } from '#/publish/types.js';
 
-import { c, enquirer, logger, unwrapFatal } from '@zokugun/cli-utils';
+import { c, confirm, enquirer, logger, unwrapFatal } from '@zokugun/cli-utils';
 import { isWorkingDirectoryClean, withGitTransaction } from '@zokugun/git-toolkit';
 
 import { bump } from '#/bump/bump.js';
@@ -15,9 +15,7 @@ import { buildContext } from '#utils/buildContext.js';
 import { buildTransactionOptions } from '#utils/buildTransactionOptions.js';
 import { formatVersion } from '#utils/formatVersion.js';
 
-type Options = BumpOptions & PublishOptions & {
-	pause?: boolean;
-};
+type Options = BumpOptions & PublishOptions;
 
 export async function release(options: Options): Promise<void> {
 	logger.beginTimer();
@@ -42,11 +40,7 @@ export async function release(options: Options): Promise<void> {
 	const txOptions = buildTransactionOptions(publishSettings);
 
 	unwrapFatal(await withGitTransaction(async () => {
-		if(options.pause) {
-			if(bumpSettings.ci) {
-				logger.fatal('Cannot pause in CI');
-			}
-
+		if(bumpSettings.interactive?.version) {
 			if(!(bumpSettings.mode & Mode.Prompt)) {
 				logger.print(`${c.gray(c.symbols.pointer)} Next version (${formatVersion(result.version)})`);
 			}
@@ -60,11 +54,20 @@ export async function release(options: Options): Promise<void> {
 				logger.print(`${c.gray(c.symbols.pointer)} Tag (${context.tagName})`);
 			}
 
-			await enquirer.prompt({
-				type: 'invisible',
-				name: 'pause',
-				message: !publishSettings.commit.all || publishSettings.pullRequest ? 'Press ENTER to continue...' : 'Modify the files as needed, then press ENTER to continue...',
-			});
+			if(bumpSettings.interactive.version === 'confirm') {
+				await enquirer.prompt(confirm({
+					name: 'commit',
+					message: `Are the data ok?`,
+					initial: true,
+				}));
+			}
+			else {
+				await enquirer.prompt({
+					type: 'invisible',
+					name: 'pause',
+					message: !publishSettings.commit.all || publishSettings.pullRequest ? 'Press ENTER to continue...' : 'Modify the files as needed, then press ENTER to continue...',
+				});
+			}
 		}
 
 		if(publishSettings.pullRequest) {
