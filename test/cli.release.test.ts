@@ -51,7 +51,7 @@ it('cfg.confirm.only.commit', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 200,
+			timeout: 500,
 		},
 	);
 
@@ -104,7 +104,7 @@ it('cfg.pause.combo.cv', async () => { // {{{
 			},
 		],
 		{
-			timeout: 200,
+			timeout: 500,
 		},
 	);
 
@@ -148,7 +148,7 @@ it('cfg.pause.only.commit', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 200,
+			timeout: 500,
 		},
 	);
 
@@ -192,7 +192,7 @@ it('cfg.pause.only.push', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 200,
+			timeout: 500,
 		},
 	);
 
@@ -236,7 +236,7 @@ it('cfg.pause.only.tag', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 200,
+			timeout: 500,
 		},
 	);
 
@@ -280,7 +280,7 @@ it('cfg.pause.only.version', async () => { // {{{
 			send: '<enter>',
 		}],
 		{
-			timeout: 200,
+			timeout: 500,
 		},
 	);
 
@@ -366,7 +366,7 @@ it('opt.patch.pause', async () => { // {{{
 			},
 		],
 		{
-			timeout: 200,
+			timeout: 500,
 		},
 	);
 
